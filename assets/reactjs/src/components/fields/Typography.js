@@ -28,6 +28,49 @@ class Typography extends Component {
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
+    componentDidUpdate(prevProps, prevState) {
+        if ((prevProps.value.family !== this.props.value.family)) {
+            const meta = wp.data.select('core/editor').getEditedPostAttribute('meta');
+            let googleFonts = '';
+
+            if ((typeof meta !== 'undefined' && typeof meta._qubely_gfonts !== 'undefined')) {
+                googleFonts = meta._qubely_gfonts;
+                if (googleFonts.length > 0) {
+                    if (SYSTEMFONTS.includes(this.props.value.family)) {
+                        if (googleFonts.includes(prevProps.value.family)) {
+                            googleFonts = googleFonts.replace(`${prevProps.value.family}`, '');
+                            if (googleFonts.includes(',,')) {
+                                googleFonts = googleFonts.replace(',,', ',');
+                            }
+                            if (googleFonts.slice(-1) === ',') {
+                                googleFonts = googleFonts.slice(0, -1);
+                            } else if (googleFonts.charAt(0) === ',') {
+                                googleFonts = googleFonts.substring(1);
+                            }
+                        }
+                    } else {
+                        if (!googleFonts.includes(this.props.value.family)) {
+                            if (googleFonts.includes(prevProps.value.family)) {
+                                googleFonts = googleFonts.replace(`${prevProps.value.family}`, `${this.props.value.family}`);
+                            } else {
+                                googleFonts = googleFonts.replace(',' + this.props.value.family, '');
+                                googleFonts = googleFonts + ',' + this.props.value.family;
+                            }
+                        }
+                    }
+
+                } else if (googleFonts.length === 0 && !SYSTEMFONTS.includes(this.props.value.family)) {
+                    googleFonts = this.props.value.family;
+                }
+
+                wp.data.dispatch('core/editor').editPost({
+                    meta: {
+                        _qubely_gfonts: googleFonts,
+                    },
+                });
+            }
+        }
+    }
     handleClickOutside = (event) => {
         const { showFontFamiles, showFontWeights } = this.state
         if (showFontFamiles) {
@@ -91,7 +134,6 @@ class Typography extends Component {
     }
     handleTypographyChange(val) {
         this.setSettings('family', val)
-        console.log('val : ', val);
 
         let qubelyFonts = JSON.parse(localStorage.getItem('qubelyFonts'))
         let selectedFont = FontList.filter(font => font.n == val)
@@ -108,35 +150,33 @@ class Typography extends Component {
             }
 
         } else {
-            qubelyFonts = [...selectedFont]
+            qubelyFonts = [...selectedFont];
         }
         localStorage.setItem('qubelyFonts', JSON.stringify(qubelyFonts));
-        
+
         /**
          * Update meta value 
          * if Google fonts are used
          */
-        if (!SYSTEMFONTS.includes(val)) {
-            const meta = wp.data.select('core/editor').getEditedPostAttribute('meta');
-            let googleFonts = '';
-            if (typeof meta !== 'undefined' && typeof meta._qubely_gfonts !== 'undefined') {
-                googleFonts = meta._qubely_gfonts;
-                console.log('existing : ', googleFonts);
-            }
-            if (googleFonts.length > 0) {
-                googleFonts = googleFonts.replace(',' + val, '');
-                googleFonts = googleFonts + ',' + val;
-            } else {
-                googleFonts = val;
-            }
-            console.log('google fonts : ', googleFonts);
-            // Save values to metadata
-            wp.data.dispatch('core/editor').editPost({
-                meta: {
-                    _qubely_gfonts: googleFonts,
-                },
-            });
-        }
+        // if (!SYSTEMFONTS.includes(val)) {
+        //     const meta = wp.data.select('core/editor').getEditedPostAttribute('meta');
+        //     let googleFonts = '';
+        //     if (typeof meta !== 'undefined' && typeof meta._qubely_gfonts !== 'undefined') {
+        //         googleFonts = meta._qubely_gfonts;
+        //     }
+        //     if (googleFonts.length > 0) {
+        //         googleFonts = googleFonts.replace(',' + val, '');
+        //         googleFonts = googleFonts + ',' + val;
+        //     } else {
+        //         googleFonts = val;
+        //     }
+        //     // Save values to metadata
+        //     wp.data.dispatch('core/editor').editPost({
+        //         meta: {
+        //             _qubely_gfonts: googleFonts,
+        //         },
+        //     });
+        // }
 
     }
     render() {
@@ -173,17 +213,6 @@ class Typography extends Component {
             )
         }
 
-        const {
-            isSavingPost,
-            isPreviewingPost,
-            isPublishingPost,
-            isAutosavingPost,
-        } = wp.data.select('core/editor');
-
-        if ((isSavingPost() || isPreviewingPost() || isPublishingPost()) && !isAutosavingPost()) {
-            // this.updateGlobalSettings();
-            console.log('save me');
-        }
         return (
             <div className="qubely-field qubely-field-typography">
                 {

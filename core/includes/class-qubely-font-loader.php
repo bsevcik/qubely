@@ -55,7 +55,7 @@ class Qubely_Font_Loader {
 		if ( $post && isset( $post->ID ) ) {
 
 			$fonts = get_post_meta( $post->ID, '_qubely_gfonts', true );
-            print_r($fonts);
+            // print_r($fonts);
 
 			if ( ! empty( $fonts ) ) {
 
@@ -85,7 +85,7 @@ class Qubely_Font_Loader {
 					$query_args = array(
 						'family' => $gfonts,
 					);
-                    print_r($gfonts);
+                    // print_r($gfonts);
 					wp_register_style(
 						'qubely_google_fonts',
 						add_query_arg( $query_args, '//fonts.googleapis.com/css' ),
