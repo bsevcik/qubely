@@ -46,6 +46,12 @@ require_once QUBELY_DIR_PATH . 'core/Options.php';   // Loading QUBELY Blocks Ma
 // Page Template Added
 require_once QUBELY_DIR_PATH.'core/Template.php';
 
+
+/**
+ * Load Google fonts
+ */
+require_once QUBELY_DIR_PATH . 'core/includes/class-qubely-font-loader.php';
+
 if (class_exists('QUBELY_Options')){
     new QUBELY_Options();
 }

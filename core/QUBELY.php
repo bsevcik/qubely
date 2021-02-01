@@ -613,8 +613,31 @@ class QUBELY {
 				'type'         => 'string',
 			)
 		);
+		// @since 1.6.4
+		/**
+		 * Google Fonts
+		 */
+		register_meta(
+			'post',
+			'_qubely_gfonts',
+			array(
+				'show_in_rest'  => true,
+				'single'        => true,
+				'auth_callback' => array( $this, 'auth_callback' ),
+			)
+		);
 	}
 
+	/**
+	 * Determine if the current user can edit posts
+	 *
+	 * @return bool True when can edit posts, else false.
+	 */
+	public function auth_callback() {
+		
+		return current_user_can( 'edit_posts' );
+
+	}
 
 	/**
 	 * @since 1.0.0-BETA

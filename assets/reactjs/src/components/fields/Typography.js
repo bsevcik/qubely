@@ -10,7 +10,7 @@ const { Component, Fragment } = wp.element;
 const { Dropdown, Tooltip, SelectControl } = wp.components;
 const { createHigherOrderComponent } = wp.compose;
 
-
+const SYSTEMFONTS = ['Arial', 'Tahoma', 'Verdana', 'Helvetica', 'Times New Roman', 'Trebuchet MS', 'Georgia'];
 class Typography extends Component {
     constructor(props) {
         super(props)
@@ -22,7 +22,7 @@ class Typography extends Component {
             showFontWeights: false,
         }
     }
-    async  componentDidMount() {
+    async componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
     }
     componentWillUnmount() {
@@ -91,6 +91,7 @@ class Typography extends Component {
     }
     handleTypographyChange(val) {
         this.setSettings('family', val)
+        console.log('val : ', val);
 
         let qubelyFonts = JSON.parse(localStorage.getItem('qubelyFonts'))
         let selectedFont = FontList.filter(font => font.n == val)
@@ -109,8 +110,34 @@ class Typography extends Component {
         } else {
             qubelyFonts = [...selectedFont]
         }
+        localStorage.setItem('qubelyFonts', JSON.stringify(qubelyFonts));
+        
+        /**
+         * Update meta value 
+         * if Google fonts are used
+         */
+        if (!SYSTEMFONTS.includes(val)) {
+            const meta = wp.data.select('core/editor').getEditedPostAttribute('meta');
+            let googleFonts = '';
+            if (typeof meta !== 'undefined' && typeof meta._qubely_gfonts !== 'undefined') {
+                googleFonts = meta._qubely_gfonts;
+                console.log('existing : ', googleFonts);
+            }
+            if (googleFonts.length > 0) {
+                googleFonts = googleFonts.replace(',' + val, '');
+                googleFonts = googleFonts + ',' + val;
+            } else {
+                googleFonts = val;
+            }
+            console.log('google fonts : ', googleFonts);
+            // Save values to metadata
+            wp.data.dispatch('core/editor').editPost({
+                meta: {
+                    _qubely_gfonts: googleFonts,
+                },
+            });
+        }
 
-        localStorage.setItem('qubelyFonts', JSON.stringify(qubelyFonts))
     }
     render() {
         const {
@@ -144,6 +171,18 @@ class Typography extends Component {
             newFontList = newFontList.filter(item =>
                 item.n.toLowerCase().search(filterText.toLowerCase()) !== -1
             )
+        }
+
+        const {
+            isSavingPost,
+            isPreviewingPost,
+            isPublishingPost,
+            isAutosavingPost,
+        } = wp.data.select('core/editor');
+
+        if ((isSavingPost() || isPreviewingPost() || isPublishingPost()) && !isAutosavingPost()) {
+            // this.updateGlobalSettings();
+            console.log('save me');
         }
         return (
             <div className="qubely-field qubely-field-typography">
