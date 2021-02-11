@@ -4,7 +4,7 @@ Donate link: https://www.themeum.com
 Tags: blocks, gutenberg, gutenberg blocks, editor, block, page builder
 Requires at least: 5.0
 Tested up to: 5.6
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 Requires PHP: 7.0
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -76,7 +76,7 @@ More advanced Gutenberg blocks, pre-designed sections and starter packs are comi
 
 ## Pro Features
 
-13 blocks that help you build more sophisticated designs-
+14 blocks that help you build more sophisticated designs-
 
 * [Form Builder](https://qubely.io/block/form-builder/)
 * [Image Gallery](https://qubely.io/block/image-gallery/)
@@ -91,6 +91,7 @@ More advanced Gutenberg blocks, pre-designed sections and starter packs are comi
 * [Countdown](https://qubely.io/block/countdown/)
 * [Table Builder](https://qubely.io/block/table-builder/)
 * [Woo Products](https://qubely.io/block/woo-products/)
+* [Woo Carousel](https://qubely.io/block/woo-carousel/)
 
 ⭐️ [Ready Sections](https://qubely.io/section/) ⭐️ [Starter Packs](https://qubely.io/starter-packs/)
 
@@ -239,10 +240,14 @@ You can report bugs on the [support forum here](https://wordpress.org/support/pl
 
 == Changelog ==
 
-= 1.6.4 - 26 January, 2021 = 
+= 1.6.5 - 23 February, 2021 = 
+New: Font Awesome CSS loading settings under Qubely settings  
+
+= 1.6.4 - 09 February, 2021 = 
 Update: Optimised Font Awesome CSS loading on Front-end
 Update: Contact Form block - Linebreak support in message  
 Fix: Table of Contents block - Indent value not saving 
+Fix: Row block - Shape divider picker not showing  
 Fix: Media field - Image picker conflict with WordPress 5.6 
 
 = 1.6.3 - 18 December, 2020 = 
